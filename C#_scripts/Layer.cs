@@ -8,13 +8,13 @@ namespace Neural_networks.Neural_networks
 {
     internal class Layer
     {
-        private int input_size;
-        private int output_size;
+        public int input_size { get; set; }
+        public int output_size { get; set; }
         public double[]? inputs { get; set; }
-        private double[]? outputs = null;
+        public double[]? outputs { get; set; }
         private double[][]? weights = null;
         private double[]? biases = null;
-        private double[]? weighted_sums = null;
+        public double[]? weighted_sums = null;
         
 
         public Layer(int input_size, int output_size, double[]? inputs, double[]? outputs)
@@ -26,7 +26,7 @@ namespace Neural_networks.Neural_networks
 
             if (inputs == null)
             {
-                throw new ArgumentNullException(nameof(inputs), "Input array cannot be null");
+                //throw new ArgumentNullException(nameof(inputs), "Input array cannot be null");
                 //populate_inputs();
             }
 

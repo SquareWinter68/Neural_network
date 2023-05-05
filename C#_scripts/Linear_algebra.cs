@@ -18,15 +18,28 @@ namespace Neural_networks.Neural_networks
             return vector1.Select((value, index) => (value + vector2[index])).ToArray();
         }
 
-        public Double dot_product(List<Double> vector1, List<Double> vector2)
+        public double[] vector_subtraction(double[] vector1, double[] vector2)
         {
-            if (vector1.Count != vector2.Count)
+            if ((vector1.Length != vector2.Length)){
+                throw new ArgumentException("Vectors have to be of the same length");
+            }
+            return vector1.Select((value, index) => (value - vector2[index])).ToArray();
+        }
+
+        public double[] vector_scalar_multiplication(double[] vector, double scalar)
+        {
+            return vector.Select(_ => _ * scalar).ToArray();
+        }
+
+        public double dot_product(double[] vector1, double[] vector2)
+        {
+            if (vector1.Length != vector2.Length)
             {
                 throw new ArgumentException("Vectors must be of the same shape/dimension");
             }
             double dot = 0;
 
-            for (int i = 0; i < vector1.Count; i++)
+            for (int i = 0; i < vector1.Length; i++)
             {
                 dot += vector1[i] * vector2[i];
             }
@@ -95,7 +108,7 @@ namespace Neural_networks.Neural_networks
             //reminder this result is transposed!
         }
 
-        public double[] elementwise_vector_product(double[] vector1, double[] vector2)
+        public double[] hadarmad_vector_product(double[] vector1, double[] vector2)
         {
             if(vector1.Length != vector2.Length)
             {
