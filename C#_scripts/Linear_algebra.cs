@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,6 +52,22 @@ namespace Neural_networks.Neural_networks
             throw new NotImplementedException();
         }
 
+        public double[] hadamard_vector_product(double[] vector1, double[] vector2)
+        {
+            if (vector1.Length != vector2.Length)
+            {
+                throw new ArgumentException("Vectors must be of same dimension");
+            }
+            //return vector1.Select((value, index) => (value * vector2[index])).ToArray();
+            //need faster implementation
+            double[] result = new double[vector1.Length];
+            for (int i = 0; i < vector1.Length; i++)
+            {
+                result[i] = vector1[i] * vector2[i];
+            }
+            return result;
+        }
+
         public double[][] matrix_multiplication(double[][] matrix1, double[][] matrix2)
         {
             if (matrix1[0].Length != matrix2.Length)
@@ -91,6 +108,11 @@ namespace Neural_networks.Neural_networks
         {
             // this function supposes the vector it is given is transposed
             // the user should also suppose the vector they are returned is transposed
+            
+            if (matrix[0].Length != vector.Length)
+            {
+                throw new ArgumentException("Arrays must be of same shape");
+            }
 
             double[] result = new double[matrix.Length];
 
@@ -108,20 +130,23 @@ namespace Neural_networks.Neural_networks
             //reminder this result is transposed!
         }
 
-        public double[] hadarmad_vector_product(double[] vector1, double[] vector2)
+        public double[][] transpose_matrix(double[][] matrix)
         {
-            if(vector1.Length != vector2.Length)
+            double[][] result = new double[matrix[0].Length][];
+            for (int row = 0; row < result.Length; row++)
             {
-                throw new ArgumentException("Vectors must be of same dimension");
+                result[row] = new double[matrix.Length];
             }
-            //return vector1.Select((value, index) => (value * vector2[index])).ToArray();
-            //need faster implementation
-            double[] result = new double[vector1.Length];
-            for (int i = 0; i < vector1.Length; i++)
+            
+            for(int matrix_row = 0; matrix_row < matrix.Length; matrix_row++)
             {
-                result[i] = vector1[i] * vector2[i];
+                for(int matrix_column = 0; matrix_column < matrix[0].Length; matrix_column++)
+                {
+                    result[matrix_column][matrix_row] = matrix[matrix_row][matrix_column];
+                }
             }
             return result;
         }
+        
     }
 }

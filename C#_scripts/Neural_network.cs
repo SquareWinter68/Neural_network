@@ -75,7 +75,7 @@ namespace Neural_networks.Neural_networks
             double[] outputs = calculate_outputs(data_point.inputs);
             Layer layer = layers[layers.Length - 1];
 
-            output_layer_error = lin_alg.hadarmad_vector_product(lin_alg.vector_subtraction(outputs, data_point.expected_outputs), layer.weighted_sums);
+            output_layer_error = lin_alg.hadamard_vector_product(lin_alg.vector_subtraction(outputs, data_point.expected_outputs), layer.weighted_sums);
             return output_layer_error;
         }
 

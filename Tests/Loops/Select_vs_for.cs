@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Neural_networks.Neural_networks
+namespace Neural_networks.Neural_networks.Performance_tests
 {
     internal class Select_vs_for
     {
@@ -17,7 +17,7 @@ namespace Neural_networks.Neural_networks
         public string Time(Performance preformance)
         {
             Stopwatch stopwatch = new Stopwatch();
-            
+
             stopwatch.Start();
             preformance();
             stopwatch.Stop();
@@ -27,8 +27,8 @@ namespace Neural_networks.Neural_networks
         }
 
         public void Time_them_both()
-        {      
-            Performance performance = () => Enumerable.Range(0, 9000000).Select(_ => function(_)).ToArray();   
+        {
+            Performance performance = () => Enumerable.Range(0, 9000000).Select(_ => function(_)).ToArray();
             Performance performance1 = () =>
             {
                 double[] values = new double[9000000];
