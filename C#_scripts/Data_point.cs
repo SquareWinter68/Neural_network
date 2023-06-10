@@ -16,5 +16,8 @@ namespace Neural_networks.Neural_networks
             this.inputs = inputs;
             this.expected_outputs = expected_outputs;
         }
+
     }
+
+
 }

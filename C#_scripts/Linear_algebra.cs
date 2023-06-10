@@ -9,22 +9,85 @@ namespace Neural_networks.Neural_networks
 {
     internal class Linear_algebra
     {
-        public double[] vector_adition(double[] vector1, double[] vector2)
+        public double[] vector_addition(double[] vector1, double[] vector2)
         {
-            if (vector1.Length != vector2.Length)
+            if ((vector1.Length != vector2.Length))
             {
                 throw new ArgumentException("Vectors have to be of the same length");
             }
+            double[] result = new double[vector1.Length];
+            int vectorsize = Vector<double>.Count;
+            int i = 0;
+            for (; i < vector1.Length - vectorsize; i += vectorsize)
+            {
+                Vector<double> vec1 = new Vector<double>(vector1, i);
+                Vector<double> vec2 = new Vector<double>(vector2, i);
+                var temp_res = vec1 + vec2;
+                temp_res.CopyTo(result, i);
+            }
 
-            return vector1.Select((value, index) => (value + vector2[index])).ToArray();
+            if (i != vector1.Length)
+            {
+                for (; i < vector1.Length; i++)
+                {
+                    result[i] = vector1[i] + vector2[i];
+                }
+            }
+            return result;
         }
 
         public double[] vector_subtraction(double[] vector1, double[] vector2)
         {
-            if ((vector1.Length != vector2.Length)){
+            if ((vector1.Length != vector2.Length))
+            {
                 throw new ArgumentException("Vectors have to be of the same length");
             }
-            return vector1.Select((value, index) => (value - vector2[index])).ToArray();
+            double[] result = new double[vector1.Length];
+            int vectorsize = Vector<double>.Count;
+            int i = 0;
+            for (; i < vector1.Length - vectorsize; i += vectorsize)
+            {
+                Vector<double> vec1 = new Vector<double>(vector1, i);
+                Vector<double> vec2 = new Vector<double>(vector2, i);
+                var temp_res = vec1 - vec2;
+                temp_res.CopyTo(result, i);
+            }
+
+            if (i != vector1.Length)
+            {
+                for (; i < vector1.Length; i++)
+                {
+                    result[i] = vector1[i] - vector2[i];
+                }
+            }
+            return result;
+        }
+
+        public double[] vector_subtraction_with_second_vector_scaling_factor(double[] vector1, double[] vector2, double scaling_factor)
+        {
+            if ((vector1.Length != vector2.Length))
+            {
+                throw new ArgumentException("Vectors have to be of the same length");
+            }
+            double[] result = new double[vector1.Length];
+            int vectorsize = Vector<double>.Count;
+            int i = 0;
+            for (; i < vector1.Length - vectorsize; i += vectorsize)
+            {
+                Vector<double> vec1 = new Vector<double>(vector1, i);
+                Vector<double> vec2 = new Vector<double>(vector2, i);
+                var temp_res = vec1 - (scaling_factor * vec2);
+                temp_res.CopyTo(result, i);
+            }
+
+            if (i != vector1.Length)
+            {
+                for (; i < vector1.Length; i++)
+                {
+                    result[i] = vector1[i] - (scaling_factor * vector2[i]);
+                }
+            }
+            return result;
         }
 
         public double[] vector_scalar_multiplication(double[] vector, double scalar)
@@ -66,6 +129,33 @@ namespace Neural_networks.Neural_networks
                 result[i] = vector1[i] * vector2[i];
             }
             return result;
+        }
+
+        public double[][] matrix_subtraction_with_second_matrix_scaling_factor(double[][] matrix1, double[][] matrix2, double matrix2_scaliing_factor)
+        {
+            if (!(matrix1.Length == matrix2.Length && matrix1[0].Length == matrix2[0].Length))
+            {
+                throw new ArgumentException("Matrices must be of same shape");
+            }
+            int vectorsize = Vector<double>.Count;
+            for(int row = 0; row < matrix1.Length; row++)
+            {
+                int element = 0;
+                for(; element <= matrix1[0].Length - vectorsize; element += vectorsize)
+                {
+                    Vector<double> mat1_vector = new Vector<double>(matrix1[row], element);
+                    Vector<double> mat2_vector = new Vector<double>(matrix2[row], element);
+                    mat2_vector *= matrix2_scaliing_factor;
+                    var temp_res = mat1_vector - mat2_vector;
+                    temp_res.CopyTo(matrix1[row], element);
+                }
+                
+                for(; element < matrix1[0].Length; element++)
+                {
+                    matrix1[row][element] = matrix1[row][element] - matrix2_scaliing_factor * matrix2[row][element];
+                }
+            }
+            return matrix1;
         }
 
         public double[][] matrix_multiplication(double[][] matrix1, double[][] matrix2)
@@ -129,6 +219,77 @@ namespace Neural_networks.Neural_networks
             return result;
             //reminder this result is transposed!
         }
+
+        public double[] matrix_vector_multiplication_vectorized(double[][] matrix, double[] vector_)
+        {
+            double[] result = new double[matrix.Length];
+            int vector_size = Vector<double>.Count;
+
+            for (int row = 0; row < matrix.Length; row++)
+            {
+                double temp_result = 0d;
+                int element = 0;
+
+                for (; element <= matrix[0].Length - vector_size; element += vector_size)
+                {
+                    Vector<double> row_vector = new Vector<double>(matrix[row], element);
+                    Vector<double> vector = new Vector<double>(vector_, element);
+                    temp_result += Vector.Dot(row_vector, vector);
+                }
+
+                for (; element < matrix[0].Length; element++)
+                {
+                    temp_result += matrix[row][element] * vector_[element];
+                }
+
+                result[row] = temp_result;
+            }
+            return result;
+        }
+
+        public double[] matrix_vector_multiplication_vectorized(Trasnposed_matrix matrix, double[] vector_) {
+            if (matrix.Columns != vector_.Length)
+            {
+                throw new ArgumentException("The columnsize and vector length must match");
+            }
+            int vectorsize = Vector<double>.Count;
+            double[] result = new double[matrix.Rows];
+            for (int row = 0; row < matrix.Rows; row++)
+            {
+                double temp_result = 0d;
+                int element = 0;
+                for (; element <= matrix.Columns - vectorsize; element += vectorsize)
+                {
+                    Vector<double> row_vector = new Vector<double>(matrix[row], element);
+                    Vector<double> vector = new Vector<double>(vector_, element);
+                    temp_result += Vector.Dot(row_vector, vector);
+                }
+                
+                for(; element < matrix.Columns; element ++)
+                {
+                    temp_result += matrix[row][element] * vector_[element];
+                }
+
+                result[row] = temp_result;
+            }
+            return result;
+        }
+
+        public double[][] row_vector_column_vector_multiplication(double[] row_vector, double[] column_vector)
+        {
+            double[][] result = new double[row_vector.Length][];
+
+            for (int row = 0; row < row_vector.Length; row++)
+            {
+                result[row] = new double[column_vector.Length];
+                for (int column = 0; column < column_vector.Length; column++)
+                {
+                    result[row][column] = row_vector[row] * column_vector[column];
+                }
+            }
+            return result;
+        }
+
 
         public double[][] transpose_matrix(double[][] matrix)
         {
